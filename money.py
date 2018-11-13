@@ -1,4 +1,6 @@
 class DifferentCurrencyError(Exception):
+    """ Base class for all other exceptions """
+
     pass
 
 
@@ -15,13 +17,18 @@ class Currency:
         - symbol - optional symbol used to designate currency
         - digits -- number of significant digits used
         """
-        pass
+        self.name = name
+        self.code = code
+        self.symbol = symbol
+        self.digits = digits
 
     def __str__(self):
         """
         Should return the currency code, or code with symbol in parentheses.
         """
-        pass
+        if self.symbol:
+            return self.symbol
+        return f'{self.code} '
 
     def __eq__(self, other):
         """
@@ -43,14 +50,21 @@ class Money:
         - amount -- quantity of currency
         - currency -- type of currency
         """
-        pass
+        self.amount = amount
+        self.currency = currency
 
     def __str__(self):
         """
         Should use the currency symbol if available, else use the code.
         Use the currency digits to determine number of digits to show.
         """
-        pass
+        if self.currency.digits == 2:
+            formatted_amount = f'{self.amount:.2f}'
+        elif self.currency.digits == 3:
+            formatted_amount = f'{self.amount:.3f}'
+
+        formatted_amount = f'{self.amount:.{self.currency.digits}f}'
+        return f'{str(self.currency)}{formatted_amount}'
 
     def __repr__(self):
         return f"<Money {str(self)}>"
@@ -67,7 +81,9 @@ class Money:
         Add two money objects of the same currency. If they have different
         currencies, raise a DifferentCurrencyError.
         """
-        pass
+        if self.currency.code == other.currency:
+            return Money(self.amount + other.amount, self.currency)
+        raise(DifferentCurrencyError)
 
     def sub(self, other):
         """
@@ -80,7 +96,6 @@ class Money:
         """
         Multiply a money object by a number to get a new money object.
         """
-        pass
 
     def div(self, divisor):
         """
